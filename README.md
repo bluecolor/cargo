@@ -6,7 +6,7 @@
 * `sbt assembly`
 
 ## Make dist
-* `./make-dist.sh` copies the executable in `dist` folder
+* `./make-dist.sh` copies the executables to `dist` folder
 
 
 ## Installation
