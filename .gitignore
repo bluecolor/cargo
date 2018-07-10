@@ -1,0 +1,10 @@
+backup
+app.cfg
+project/target
+project/project
+db/*
+target
+draft.txt
+.vscode
+demo.py
+cargo.sh

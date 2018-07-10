@@ -1,0 +1,72 @@
+
+# enable/disable progress bar if set to true no progress will be displayed
+# QUIET = false
+
+# Source connection JDBC url
+# SOUCE_URL =
+
+# Source connection JDBC driver class name
+# Class name can be given explicitly here or it will be inferred from the connection url
+# SOURCE_DRIVER_CLASSNAME =
+
+# Source connection username
+# SOURCE_USERNAME =
+
+# Source connection password
+# SOURCE_PASSWORD =
+
+# Source table to extract
+# The value for this option can be in any of the following formats;
+# [[catalog.]schema.]name [partition(partition-name)]
+# examples:
+# - dbo.dwh.some_table
+# - dwh.some_table partition(p200101)
+# - some_table
+# SOURCE_TABLE =
+
+# JDBC fetch size defaults to 1000
+# see https://docs.oracle.com/javase/7/docs/api/java/sql/Statement.html#setFetchSize(int)
+# FETCH_SIZE =
+
+# Target connection JDBC url
+# TARGET_URL =
+
+# Target connection JDBC driver class name
+# Class name can be given explicitly here or it will be inferred from the connection url
+# TARGET_DRIVER_CLASSNAME =
+
+# Target connection username
+# TARGET_USERNAME =
+
+# Target connection password
+# TARGET_PASSWORD =
+
+
+# Target table to load data
+# The value for this option can be in any of the following formats;
+# [[catalog.]schema.]name [partition(partition-name)]
+# examples:
+# - dbo.dwh.some_table
+# - dwh.some_table partition(p200101)
+# - some_table
+# TARGET_TABLE =
+
+# Insert statement jdbc batch size
+# see (https://docs.oracle.com/javase/7/docs/api/java/sql/Statement.html#addBatch(java.lang.String))
+# INSERT_BATCH_SIZE =
+
+# Create target table true|false
+# a drop statement is executed before the create statement.
+# table will be created with the attributes of source table
+# CREATE =
+
+# Truncate target table
+# TRUNCATE =
+
+# Create table options
+# eg. parallel nologging compress
+# CREATE_OPTIONS =
+
+# Filter to be applied to source data
+# eg. some_column < sysdate and another_column = 1
+# FILTER =
