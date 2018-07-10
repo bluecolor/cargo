@@ -2,6 +2,9 @@
 
 - Cross database data transfer tool
 
+## Requirements
+- java 1.8^
+
 ## Build
 * `sbt assembly`
 
