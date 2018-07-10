@@ -1,5 +1,7 @@
 # Cargo
 
+- Cross database data transfer tool
+
 ## Build
 * `sbt assembly`
 
@@ -7,9 +9,12 @@
 * `./make-dist.sh` copies the executable in `dist` folder
 
 
-## Running
+## Installation
+* just copy the `dist` folder
+* make sure you have `java`
 
-run `./cargo -h` for command line options
+## Running
+* go to dist folder and run `./cargo -h` for command line options
 
 ```
 usage: cargo

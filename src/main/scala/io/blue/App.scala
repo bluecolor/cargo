@@ -47,19 +47,18 @@ object Application extends App {
     case None => new Table(options.sourceTable, vendor)
   }
 
-  options.create match {
-    case true =>
-      targetTable.columns ++= sourceTable.columns // set the target's columns equal to source columns
-      MetaData.create(targetTable, targetConConf, options.createOptions)
-    case _ =>
+  if (options.create) { // create target table
+    targetTable.columns ++= sourceTable.columns // set the target's columns equal to source columns
+    MetaData.create(targetTable, targetConConf, options.createOptions)
   }
 
-  options.truncate match {
-    case true => MetaData.truncate(targetTable,targetConConf)
-    case _ =>
+  if (options.truncate) { // truncate target table
+    MetaData.truncate(targetTable, targetConConf)
   }
 
   if (targetTable.columns.isEmpty) {
+    // if we still do not have the columns of target table
+    // get them from the target db
     targetTable.columns ++= MetaData.findColumns(targetTable, targetConConf)
   }
 
