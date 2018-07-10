@@ -50,7 +50,7 @@ class Table(var expression: String, var vendor: Option[String] = None) {
     val statement = s"select ${Vendor.getCountFunctionByVendor(vendor)}(1) from $expression"
 
     filter match {
-      case Some(expression) => s"$statement $filter"
+      case Some(expression) => s"$statement where $expression"
       case None => statement
     }
   }
