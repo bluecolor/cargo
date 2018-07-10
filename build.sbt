@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
   ,"org.slf4j" % "slf4j-log4j12" % "1.7.25"
   ,"commons-io" % "commons-io" % "2.6"
   ,"org.apache.commons" % "commons-configuration2" % "2.2"
+  ,"commons-beanutils" % "commons-beanutils" % "1.9.3"
 )
 
 assemblyMergeStrategy in assembly := {

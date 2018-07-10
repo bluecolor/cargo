@@ -8,7 +8,9 @@ object Options {
   def init(args: Array[String]) = {
     val options = new Options
     val cli = CommandLineOptions.parseOptions(args)
-    if(cli.hasOption("config")) loadConfig(options, cli.getOptionValue("config"))
+    if(cli.hasOption("config")) {
+      loadConfig(options, cli.getOptionValue("config"))
+    }
     loadCliOptions(options, cli)
   }
 
@@ -18,7 +20,6 @@ object Options {
     o.config = Some(file)
     o.quiet = config.getBoolean("QUIET", false)
     o.sourceUrl = config.getString("SOURCE_URL", "")
-
     o.sourceDriverClassName = if (config.getString("SOURCE_DRIVER_CLASSNAME", "") == "")
       None
     else
