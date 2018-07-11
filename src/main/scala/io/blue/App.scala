@@ -106,6 +106,9 @@ object Application extends App {
           val len = IOUtils.toByteArray(is).length
           stmt.setBinaryStream(i, is, len)
         }
+        case _ => throw new RuntimeException("""
+          Unknown field type ${sourceTable.columns(i-1).name} - ${sourceTable.columns(i-1).columnType}
+          """)
       }
     }
     count += 1

@@ -55,7 +55,7 @@ class Table(var expression: String, var vendor: Option[String] = None) {
     }
   }
   def selectStatement(filter: Option[String] = None) =  {
-    val statement = s"select ${columns.map(_.name).sorted.mkString(", ")} from $expression"
+    val statement = s"select ${columns.map(_.name).sortWith(_.toUpperCase < _.toUpperCase).mkString(", ")} from $expression"
     filter match {
       case Some(expression) => s"$statement where $expression"
       case None => statement
@@ -64,7 +64,7 @@ class Table(var expression: String, var vendor: Option[String] = None) {
   def insertStatement = {
     s"""
       |insert into ${expression} (
-        ${columns.map(_.name).sorted
+        ${columns.map(_.name).sortWith(_.toUpperCase < _.toUpperCase)
           .map{name => if(('a' to 'z') union ('A' to 'Z') contains name(0)) name else "\""+ name +"\""}
           .mkString(", ")}
       |) values (
