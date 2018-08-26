@@ -18,6 +18,8 @@
 
 ## Running
 * go to dist folder and run `./cargo -h` for command line options
+* You can use `app.cfg` for common options see `app.cfg.template`
+
 
 ```
 usage: cargo

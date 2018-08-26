@@ -15,34 +15,48 @@ object MetaData {
 
   def findColumns(table: Table, conf: ConnectionConf) = {
     val connection = Connector.connect(conf)
-    var columns = List[Column]()
-    val md = connection.getMetaData
-    logger.debug(s"Table : catalog => ${table.catalog}, schema => ${table.schema}, name => ${table.name}")
-    val rs = md.getColumns(table.catalog.getOrElse(null), table.schema.getOrElse(null), table.name, null)
-    while(rs.next) {
-      var column = new Column
-      column.name = rs.getString("COLUMN_NAME")
-      column.columnType = rs.getInt("DATA_TYPE")
-      column.columnTypeName = rs.getString("TYPE_NAME")
-      column.size = rs.getInt("COLUMN_SIZE")
-      column.fraction = rs.getInt("DECIMAL_DIGITS")
-      column.nullable = rs.getInt("NULLABLE")
-      columns ::= column
+    try {
+      var columns = List[Column]()
+      val md = connection.getMetaData
+      logger.debug(s"Table : catalog => ${table.catalog}, schema => ${table.schema}, name => ${table.name}")
+      val rs = md.getColumns(table.catalog.getOrElse(null), table.schema.getOrElse(null), table.name, null)
+      while(rs.next) {
+        var column = new Column
+        column.name = rs.getString("COLUMN_NAME")
+        column.columnType = rs.getInt("DATA_TYPE")
+        column.columnTypeName = rs.getString("TYPE_NAME")
+        column.size = rs.getInt("COLUMN_SIZE")
+        column.fraction = rs.getInt("DECIMAL_DIGITS")
+        column.nullable = rs.getInt("NULLABLE")
+        columns ::= column
+      }
+      connection.close
+      columns.sortWith(_.name < _.name)
+    } catch {
+      case e: Exception =>
+        logger.error(ExceptionUtils.getStackTrace(e))
+        connection.close
+        throw e
     }
-    connection.close
-    columns.sortWith(_.name < _.name)
   }
 
   def count(table: Table, conf: ConnectionConf, filter: Option[String] = None) = {
-    val query = table.countStatement(filter)
-    logger.debug(query)
     val connection = Connector.connect(conf)
-    val rs = connection.createStatement.executeQuery(query)
-    var result: Long = 0
-    while(rs.next) {
-      result = rs.getLong(1)
+    try {
+      val query = table.countStatement(filter)
+      logger.debug(query)
+      val rs = connection.createStatement.executeQuery(query)
+      var result: Long = 0
+      while(rs.next) {
+        result = rs.getLong(1)
+      }
+      result
+    } catch {
+      case e: Exception =>
+        logger.error(ExceptionUtils.getStackTrace(e))
+        connection.close
+        throw e
     }
-    result
   }
 
   def prepareTable(name: String, url: String, username: String, password: String, driverClassName: Option[String] = None): Table =
@@ -69,21 +83,28 @@ object MetaData {
   def findVendorByUrl(url: String) = Connector.findVendorByUrl(url)
 
   def findColumnsWithSelect(table: Table, conf: ConnectionConf) = {
-    val q = s"select * from $table.expression"
-    val connection = Connector.connect(conf)
-    val md = connection.createStatement.executeQuery(q).getMetaData
-
-    val columns = (1 to md.getColumnCount).map{ i =>
-      var column = new Column
-      column.name = md.getColumnName(i)
-      column.columnType = md.getColumnType(i)
-      column.columnTypeName = md.getColumnTypeName(i)
-      column.size = md.getPrecision(i)
-      column.fraction = md.getScale(i)
-      column
-    }.toList.sortWith(_.name < _.name)
-    connection.close
-    columns
+    var connection: java.sql.Connection = null
+    try {
+      val q = s"select * from $table.expression"
+      connection = Connector.connect(conf)
+      val md = connection.createStatement.executeQuery(q).getMetaData
+      val columns = (1 to md.getColumnCount).map{ i =>
+        var column = new Column
+        column.name = md.getColumnName(i)
+        column.columnType = md.getColumnType(i)
+        column.columnTypeName = md.getColumnTypeName(i)
+        column.size = md.getPrecision(i)
+        column.fraction = md.getScale(i)
+        column
+      }.toList.sortWith(_.name < _.name)
+      connection.close
+      columns
+    } catch {
+      case e: Exception =>
+        logger.error(ExceptionUtils.getStackTrace(e))
+        connection.close
+        throw e
+    }
   }
 
   def create(table: Table, conf: ConnectionConf, options: Option[String]): Table =
@@ -105,26 +126,39 @@ object MetaData {
   }
 
   private def drop(table: Table, url: String, username: String, password: String, driverClassName: Option[String]) = {
-    logger.info(s"Droping table ${table.expression} ...")
     val connection = Connector.connect(ConnectionConf(url, username, password, driverClassName))
-    logger.debug(table.dropStatement)
-    connection.createStatement.executeUpdate(table.dropStatement)
-    connection.close
-    logger.info(s"Dropped table ${table.expression}")
-    table
+    try {
+      logger.info(s"Droping table ${table.expression} ...")
+      logger.debug(table.dropStatement)
+      connection.createStatement.executeUpdate(table.dropStatement)
+      connection.close
+      logger.info(s"Dropped table ${table.expression}")
+      table
+    } catch {
+      case e: Exception =>
+        logger.error(ExceptionUtils.getStackTrace(e))
+        connection.close
+        throw e
+    }
   }
 
   def truncate(table: Table, conf: ConnectionConf): Table =
     truncate(table, conf.url, conf.username, conf.password, conf.driverClassName)
 
   def truncate(table: Table, url: String, username: String, password: String, driverClassName: Option[String]): Table = {
-    logger.info(s"Truncating table ${table.expression} ...")
     val connection = Connector.connect(ConnectionConf(url, username, password, driverClassName))
-    logger.debug(table.truncateStatement)
-    connection.createStatement.executeUpdate(table.truncateStatement)
-    connection.close
-    logger.info(s"Truncated table ${table.expression}")
-    table
+    try {
+      logger.info(s"Truncating table ${table.expression} ...")
+      logger.debug(table.truncateStatement)
+      connection.createStatement.executeUpdate(table.truncateStatement)
+      connection.close
+      logger.info(s"Truncated table ${table.expression}")
+      table
+    } catch {
+      case e: Exception =>
+        logger.error(ExceptionUtils.getStackTrace(e))
+        connection.close
+        throw e
+    }
   }
-
 }

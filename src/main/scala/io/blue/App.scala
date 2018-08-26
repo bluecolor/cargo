@@ -35,7 +35,6 @@ object Application extends App {
     options.targetDriverClassName
   )
 
-
   val sourceTable = MetaData.prepareTable(options.sourceTable,sourceConConf)
   sourceTable.count = MetaData.count(sourceTable, sourceConConf, options.filter)
 
